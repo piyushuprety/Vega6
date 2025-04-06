@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        height: 100vh;
+      }
+
+      .main-content {
+        width: 80%;
+        padding: 20px;
+        overflow-y: auto;
+      }
+
+      .main-content h1 {
+        color: #333333;
+        margin-bottom: 20px;
+      }
+
+      .post {
+        background: #ffffff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 15px;
+      }
+
+      .post h3 {
+        margin: 0 0 10px;
+        color: #007bff;
+      }
+
+      .post p {
+        margin: 0;
+        color: #555555;
+      }
+
+      .post img {
+        width: 100%;
+        max-height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-top: 10px;
+      }
+
+      .sidebar {
+        width: 20%;
+        background-color: #ffffff;
+        padding: 20px;
+        box-shadow: -2px 0 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .sidebar img {
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .sidebar h2 {
+        color: #333333;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .sidebar a {
+        display: block;
+        margin: 10px 0;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 14px;
+        text-align: center;
+        transition: background-color 0.3s ease;
+      }
+
+      .sidebar a:hover {
+        background-color: #0056b3;
+      }
+
+      .sidebar .logout {
+        background-color: #dc3545;
+      }
+
+      .sidebar .logout:hover {
+        background-color: #a71d2a;
+      }
+
+      #postFilter {
+        padding: 5px 10px;
+        font-size: 14px;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+        background-color: #ffffff;
+        cursor: pointer;
+      }
+
+      #postFilter:focus {
+        outline: none;
+        border-color: #007bff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main-content">
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        "
+      >
+        <h1>All Posts</h1>
+        <select id="postFilter" onchange="filterPosts()">
+          <option value="all">All Mode</option>
+          <option value="me">Me Mode</option>
+        </select>
+      </div>
+
+      <% posts.forEach(post => { %>
+      <div class="post" data-author="<%= post.user._id %>">
+        <a href="/posts/<%= post._id %>"><h3><%= post.title %></h3></a>
+        <p><%= post.description %></p>
+        <p><strong>Author:</strong> <%= post.user.email %></p>
+        <% if (post.picture) { %>
+        <img src="/<%= post.picture %>" alt="Post Image" />
+        <% } %>
+      </div>
+      <% }) %>
+    </div>
+    <div class="sidebar">
+      <img src="/<%= user.profilePicture %>" alt="Profile Picture" />
+      <h4><%= user.email %></h4>
+      <a href="/posts/new">Create New Post</a>
+      <a href="/login" class="logout">Logout</a>
+    </div>
+    <script>
+      function filterPosts() {
+        const filter = document.getElementById('postFilter').value;
+        const userId = '<%= user._id %>'; 
+        const posts = document.querySelectorAll('.post');
+
+        posts.forEach((post) => {
+          const authorId = post.getAttribute('data-author');
+          if (filter === 'me' && authorId !== userId) {
+            post.style.display = 'none';
+          } else {
+            post.style.display = 'block'; 
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
